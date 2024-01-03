@@ -1,0 +1,6 @@
+.env
+*.csv
+.DS_Store
+settings.json
+.vscode/
+*.pyc
