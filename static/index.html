@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algotrade</title>
+    <link rel="stylesheet" href="static/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"/></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="title"> 
+            <div class="text-container">
+                <h1>Algotrade API</h1> 
+                <div class="sub-title-authors">
+                    <p>By <a href="https://github.com/MusaTabally">Musa Tabally</a> and <a href="https://github.com/Zaydo123">Zayd Alzein</a></p>
+                </div> 
+            </div>
+        </div>
+    
+        <div class="search">
+            <form id="searchForm">
+                <input type="text" id="stockTicker" placeholder="Enter stock ticker">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <div class="spawn">
+            <div class="spawn-container">
+
+                <div class="ticker-info">
+                    <h2 id="ticker-name">AAPL</h2>
+                    <h2 id="current-price">$0</h2>
+                </div>
+
+                <canvas id="myChart" style="width:100%;"></canvas>
+
+               
+                    <table>
+                    <tr>
+                        <th>Previous Open</th>
+                        <th>Previous Close</th>
+                        <th>Current Open</th>
+                        <th>Current Close</th>
+                    </tr>
+
+                    <tr>
+                        <td id="prevOpen">0</td>
+                        <td id="prevClose">0</td>
+                        <td id="currOpen">0</td>
+                        <td id="currClose">0</td>
+                    </tr>
+
+                    
+                </table>
+                <div id="signal-message"></div>
+            </div>
+        </div>
+
+        
+    </div>
+
+
+
+    
+</body>
+
+<script>
+    let myChart;
+
+    window.onload = function() {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Stock Price',
+                    backgroundColor: "rgba(0,0,255,0.2)",
+                    borderColor: "rgba(0,0,255,1)",
+                    data: [],
+                    fill: false,
+                    tension: 0.02 
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                          
+                            tooltipFormat: 'll'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Price'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Price: $${context.parsed.y.toFixed(2)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    };
+
+    document.getElementById("searchForm").addEventListener("submit", function(event) {
+        event.preventDefault(); 
+        let stockTicker = document.getElementById("stockTicker").value;
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "/signal/" + stockTicker, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                let response = JSON.parse(xhr.responseText);
+
+                document.getElementById("ticker-name").textContent = response.ticker;
+                document.getElementById("current-price").textContent = `$${parseFloat(response.current_price).toFixed(2)}`;
+                document.getElementById("prevOpen").textContent = parseFloat(response.previous_open).toFixed(2);
+                document.getElementById("prevClose").textContent = parseFloat(response.previous_close).toFixed(2);
+                document.getElementById("currOpen").textContent = parseFloat(response.latest_open).toFixed(2);
+                document.getElementById("currClose").textContent = parseFloat(response.latest_close).toFixed(2);
+
+                let data = JSON.parse(response.data);
+                let xValues = Object.keys(data.Open).map(key => new Date(parseInt(key)));
+                let yValues = Object.values(data.Close).map(value => parseFloat(value));
+
+                myChart.data.labels = xValues;
+                myChart.data.datasets[0].data = yValues;
+                myChart.update();
+
+                let signal = response.signal;
+                let message = '';
+                switch(signal) {
+                    case 0:
+                        message = 'No clear pattern detected. Hold.';
+                        break;
+                    case 1:
+                        message = 'Bearish pattern detected. Consider selling.';
+                        break;
+                    case 2:
+                        message = 'Bullish pattern detected. Consider buying.';
+                        break;
+                }
+                document.getElementById("signal-message").textContent = message;
+                document.querySelector(".spawn").style.display = "block";
+            }
+            else if(xhr.readyState === 4 && xhr.status !== 200) {
+                window.alert("Error: " + xhr.status);
+            }
+        };
+        xhr.send();
+    });
+</script>
+
+
+</html>

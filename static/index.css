@@ -1,0 +1,132 @@
+html {
+    /* darkmode theme */
+    background-color: #1f1c1c;
+    /* lato font */
+    font-family: 'Lato', sans-serif;
+}
+
+.container{
+    width: 40%;
+    margin: auto;
+    margin-top: 5vh;
+    background-color: #03040e;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+.spawn {
+    color: white;
+    display: none;
+}
+
+table { 
+    border-collapse: collapse; 
+    border-spacing: 0;     
+    width: 100%; 
+    border: 1px solid #ddd;
+}
+
+th, td { 
+    text-align: left; 
+    padding: 16px; 
+}
+
+.title {
+    display: flex;
+    justify-content: center;
+    color: white; 
+}
+.text-container {
+    margin-bottom: 3rem;
+}
+
+.title h1 {
+    margin: auto;
+    font-size: 3em;
+}
+
+#signal-message {
+    margin-top: 20px;
+    padding: 10px;
+    text-align: center;
+    font-size: 1.5em;
+    color: white;
+    background-color: #333; /* Change as needed */
+    border-radius: 5px;
+}
+
+
+.sub-title-authors > p > a {
+    font-size: 3 ;
+    text-decoration: none;
+    color: rgb(255, 0, 0);
+    cursor: pointer;
+
+}
+
+.search {
+    margin: auto;
+    padding: 30px;
+    width: 40%;
+    background-color: #0c133b;
+}
+
+#searchForm { 
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.search button {
+    margin-left:  5px;
+    background-color: #ff000093;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 3px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.search input[type=text] {
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid grey;
+    border-radius: 3px;
+    float: left;
+    width: 80%;
+    background: #f1f1f1;
+}
+
+.search input[type=text]:focus {
+    background-color: #ddd;
+    outline: none;
+}
+
+
+.ticker-info {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
+    color: white;
+    margin-top: 3rem;
+}
+
+
+
+/* Mobile Resizing */
+@media only screen and (max-width: 600px) {
+    .container {
+        width: 80%;
+    }
+    
+    .search {
+        width: 80%;
+    }
+    
+    .title h1 {
+        font-size: 2em;
+    }
+}
